@@ -29,6 +29,9 @@ while True:
 
     mask1 = cv2.inRange(HSV, lower_1, lower_2)
 
+    # kernel = np.ones((5,5),np.uint8)
+    # closing = cv2.morphologyEx(mask1, cv2.MORPH_CLOSE, kernel)
+
     res_1 = cv2.bitwise_and(img, img, mask=mask1)
     cv2.imshow("result",res_1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
