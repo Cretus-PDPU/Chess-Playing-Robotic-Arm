@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-img = cv2.imread("Python_Chess/Images/8.jpg")
+img = cv2.imread("Python_Chess/Images/7.jpg")
 img = cv2.resize(img,(800,800))
 cv2.imshow("img",img)
 
@@ -13,12 +13,12 @@ cv2.imshow("img",img)
 HSV = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
 # # for White
-# lower_1 = np.array([16,25,179])
-# lower_2 = np.array([255,255,255])
+lower_1 = np.array([16,25,179])
+lower_2 = np.array([255,255,255])
 
 # # for Black
-lower_1 = np.array([0,0,0])
-lower_2 = np.array([255,62,77])
+# lower_1 = np.array([0,0,0])
+# lower_2 = np.array([255,62,77])
 
 
 mask = cv2.inRange(HSV, lower_1, lower_2)
