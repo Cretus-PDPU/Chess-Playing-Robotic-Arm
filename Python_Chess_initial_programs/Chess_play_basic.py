@@ -48,7 +48,7 @@ img2 = cv2.resize(img2,(800,800))
 #           [[ 24., 677.],[118., 675.],[210., 674.],[304., 672.],[396., 672.],[488., 670.],[583., 670.],[676., 670.],[768., 670.]],
 #           [[ 24., 770.],[116., 770.],[209., 770.],[301., 767.],[395., 766.],[488., 766.],[582., 767.],[675., 765.],[769., 766.]]]
 
-points = np.load('Python_chess_intermediate_programs/cess_board_points.npz')['points']
+points = np.load('Python_chess_intermediate_programs/numpy_saved/chess_board_points.npz')['points']
 
 boxes = np.zeros((8,8,4))
 for i in range(8):

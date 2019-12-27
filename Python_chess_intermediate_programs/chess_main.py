@@ -1,15 +1,16 @@
-import cv2
 import os
-import numpy as np
-import chess
 import chess
 import chess.engine
-import board_point_calibration 
+import cv2
+import numpy as np
+
 import board_color_calibration
+import board_point_calibration
 import board_warp_prespective_point
-import conversion_fen_to_board
+import chess_board_bool_value
 import chess_board_mask
 import chess_board_move_map
+import conversion_fen_to_board
 
 points = []    # contains chess board corners points
 lower__w = []   # contains lower value for HSV of white player
@@ -35,8 +36,17 @@ map_move = np.load(dir_path+"/map_position.npz")
 # device = cv2.VideoCapture(0)
 # _,img = device.read()
 
-img = cv2.imread("Python_Chess_initial_programs/Images/1.jpg")
+img = cv2.imread("Python_Chess_initial_programs/Images/first_step.jpeg")
+# device = cv2.VideoCapture("http://192.168.1.136:4812/video")
+# cv2.waitkey(100)
+# ret , img = device.read()
+# img  = img[582:582+1090,0:1078]
 img = cv2.resize(img,(800,800))
+# M = cv2.getRotationMatrix2D((img.shape[1]/2,img.shape[1]/2),270,1)
+# img = cv2.warpAffine(img, M, img.shape[:2]) 
+cv2.imshow("img",img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 if __name__ == "__main__":
 
@@ -157,7 +167,7 @@ if __name__ == "__main__":
         ans = str(input())
         if ans == 'y' or ans == "Y":
             # show boxes
-            img_box = img
+            img_box = img.copy()
             for i in range(8):
                 for j in range(8):
                     box1 = boxes[i,j]
@@ -194,7 +204,6 @@ if __name__ == "__main__":
             
             # fen_line = conversion_fen_to_board.board2fen()
             result = engine.play(board, chess.engine.Limit(time=0.500))
-            print(result.move)
             position1 = str(result.move)[0:2]
             position2 = str(result.move)[2:4]
             
@@ -204,22 +213,85 @@ if __name__ == "__main__":
             position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
             position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
             draw = img.copy() 
-            cv2.rectangle(draw,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),2)
-            cv2.rectangle(draw,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,0,255),2)
+            cv2.rectangle(draw,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
+            cv2.rectangle(draw,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
             cv2.imshow("Game",draw)
+            print("player :",chess_board[box_1_cordinate[0]][box_1_cordinate[1]],"\nmoves from : ",position1,"\nmoves to : ",position2)
+            board.push(result.move)
             cv2.waitKey(0)
 
         else:
             # balck turn
-            pass
 
+            ################################################################
+            ## if there are no one to play chess
+            ################################################################
 
+            result = engine.play(board, chess.engine.Limit(time=0.400))
+            position1 = str(result.move)[0:2]
+            position2 = str(result.move)[2:4]
+            
+            box_1_cordinate = map_move[position1]
+            box_2_cordinate = map_move[position2]
 
-    # mask = chess_board_mask.find_mask(img)
+            position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
+            position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
+            draw = img.copy() 
+            cv2.rectangle(draw,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
+            cv2.rectangle(draw,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
+            cv2.imshow("Game",draw)
 
-    # contours,_= cv2.findContours(mask,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            print("player :",chess_board[box_1_cordinate[0]][box_1_cordinate[1]],"\nmoves from : ",position1,"\nmoves to : ",position2)
+            # print(board)
+            board.push(result.move)
+            cv2.waitKey(0)
 
-    # required_contoures = []
-    # required_contoures_mid_point = []
-    # cnt_rect = []
+            ################################################################
+            ## Opponent id real player
+            ################################################################
+
+            # img = cv2.imread("")
+            # device = cv2.VideoCapture("http://192.168.1.136:4812/video")
+            # ret , img = device.read()
+            # img  = img[582:582+1090,0:1078]
+            # img = cv2.resize(img,(800,800))
+
+            # past_player_bool_position = chess_board_bool_value.convert_to_bool(img)
+            # print("past palyer bool position :",past_player_bool_position)
+            # chess_board_past = conversion_fen_to_board.fen2board(board.fen())
+
+            # # it's time of player to move
+            # print("Player's Turn :")
+            # print("Press 'a' when player complete move : ")
+            # while True:
+            #     k = cv2.waitKey(1)
+            #     if k == ord('a'):
+            #         break
+
+            # # img = cv2.imread("")
+            # device = cv2.VideoCapture("http://192.168.1.136:4812/video")
+            # ret , img = device.read()
+            # img  = img[582:582+1090,0:1078]
+            # img = cv2.resize(img,(800,800))
+
+            # current_player_bool_position = chess_board_bool_value.convert_to_bool(img)
+            # print("current Player Position : ",current_player_bool_position)
+            # difference = past_player_bool_position - current_player_bool_position
+            # print("Differenc : ",difference)
+
+            # position_of_negative = np.where(difference==-1)
+            # position_of_positive = np.where(difference==1)
+            # print("Position of negative :",position_of_negative)
+            # print("Positon of positive : ",position_of_positive)
+            # chess_board = chess_board_past
+            # player_moved = chess_board_past[position_of_negative[0]][position_of_negative[1]]
+            # chess_board[position_of_negative] = '1'
+            # chess_board[position_of_positive] = player_moved
+            # np.savez(dir_path+"/ches_board.npz",chess_board = chess_board)
+            # fen_line = conversion_fen_to_board.board2fen()
+            # # board.push(move) add is better idea
+            # board = chess.Board(fen=fen_line)
+            # print("after Player move Board Position :")
+            # chess_board =  conversion_fen_to_board.fen2board(board.fen())
+            # print(chess_board)
 

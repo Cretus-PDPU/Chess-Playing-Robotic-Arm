@@ -41,15 +41,24 @@ def warp_prespective(img):
             break
 
     # print(point_a[-1][0],point_a[-1][1])
-    pts1 = np.float32([[point_a[-1][1],point_a[-1][0]],[point_b[-1][1],point_b[-1][0]],[point_d[-1][1],point_d[-1][0]],[point_c[-1][1],point_c[-1][0]]])
     pts2 = np.float32([[0,0],[width,0],[0,height],[width,height]])
+    pts1 = np.float32([[point_a[-1][0],point_a[-1][1]],
+                        [point_b[-1][0],point_b[-1][1]],
+                        [point_d[-1][0],point_d[-1][1]],
+                        [point_c[-1][0],point_c[-1][1]]])
 
+    H,maks = cv2.findHomography(pts1,pts2)
     np.savez(dir_path+"/chess_board_warp_prespective.npz",pts1=pts1,pts2=pts2)
-
-    # matrix = cv2.getPerspectiveTransform(pts1,pts2)
-    # result = cv2.warpPerspective(img,matrix,(width,height))
-    # cv2.imshow("result Image",result)
-
+    # cv2.imshow("mask",maks)
     # cv2.waitKey(0)
+    # matrix = cv2.getPerspectiveTransform(pts1,pts2)
+    result = cv2.warpPerspective(img,H,(width,height))
+    cv2.imshow("result Image",result)
+    print(result)
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
-    # return img 
+    # return img  
+
+img = cv2.imread("Python_Chess_initial_programs/Images/1.jpg")
+img = cv2.resize(img,(800,800))
+warp_prespective(img)

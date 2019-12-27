@@ -15,8 +15,10 @@ def draw_circle(event,x,y,flags,param):
         cv2.circle(img,(x,y),2,(255,0,0),-1)
         ix,iy = x,y
 
-def get_points(img):
+def get_points(image):
     # img = cv2.imread("Python_Chess_initial_programs/Images/1.jpg")
+    global img
+    img = image
     img = cv2.resize(img,(800,800))
     cv2.namedWindow('image')
     cv2.setMouseCallback('image',draw_circle)
@@ -40,4 +42,5 @@ def get_points(img):
     # points = np.load('Python_chess_intermediate_programs/cess_board_points.npz')['points']
     print("Points save successfully")
     print("==================================================")
+    cv2.destroyAllWindows()
 
