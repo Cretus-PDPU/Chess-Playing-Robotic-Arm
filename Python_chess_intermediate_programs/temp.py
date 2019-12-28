@@ -5,13 +5,13 @@ import os
 dir_path = os.path.dirname(os.path.realpath(__file__))+"/numpy_saved" # path of current directory
 
 
-img = cv2.imread("Python_Chess_initial_programs/Images/first_step.jpeg")
+img = cv2.imread("Python_Chess_initial_programs/Images/1.jpg")
 
 img = cv2.resize(img,(800,800))
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 cv2.imshow("Image",gray)
 cv2.waitKey(0)
-matrix,thresold = cv2.threshold(gray,25,255,cv2.THRESH_BINARY_INV)
+matrix,thresold = cv2.threshold(gray,50,255,cv2.THRESH_BINARY_INV)
 cv2.imshow("thresold",thresold)
 cv2.waitKey(0)
 

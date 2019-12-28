@@ -50,6 +50,25 @@ cv2.destroyAllWindows()
 
 if __name__ == "__main__":
 
+
+    ################################################################
+    ## Set camera 
+    ################################################################
+
+    # while True:
+    #     print("do you want to set camera : [y/n] :")
+    #     ans = str(input())
+    #     if ans == "y" or ans == "Y":
+            
+    #     elif ans == "n" or ans == "N":
+
+    #     else:
+
+
+    ################################################################
+    ## Set warp prespective image 
+    ################################################################
+
     while True:
         print("do you want to warp prespective images [y/n]:",end=" ")
         ans = str(input())
@@ -100,6 +119,12 @@ if __name__ == "__main__":
         else:
             print("Enter Valid Input")
 
+
+
+    ################################################################
+    ## calibrate points 
+    ################################################################
+
     while True:
         print("do you want to calibrate new Points [y/n]:",end=" ")
         ans = str(input())
@@ -118,6 +143,12 @@ if __name__ == "__main__":
             print("==================================================")
             print("something wrong input")
             print("==================================================")
+
+
+
+    ################################################################
+    ## calibrate color
+    ################################################################
 
     while True:
         print("Do you want to calibrate color [y/n] :",end=" ")
@@ -161,6 +192,12 @@ if __name__ == "__main__":
             boxes[i][j][2] = points[i+1][j+1][0]
             boxes[i][j][3] = points[i+1][j+1][1]
 
+
+
+    ################################################################
+    ## box on chess board
+    ################################################################
+
     while True:
         print("==================================================")
         print("Do you want to see Boxex on Chess board [y/n]:",end=" ")
@@ -186,6 +223,12 @@ if __name__ == "__main__":
             print("Enter valid input")
 
     np.savez(dir_path+"/chess_board_Box.npz",boxes=boxes)
+    
+
+    
+    ################################################################
+    ## game start 
+    ################################################################
     
     print("Start Game:")
     while not board.is_game_over():
