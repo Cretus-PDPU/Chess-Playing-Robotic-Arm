@@ -15,6 +15,7 @@ from detect_points import get_points
 from read_warp_img import get_warp_img
 from black_player import player_position
 from color_calibration import color_calibration
+from find_position_black import find_current_past_position
 
 ###################################################################################
 ## Define Main Variables
@@ -309,7 +310,7 @@ while not board.is_game_over():
         ret , img = device.read()
         img =   cv2.resize(img,(800,800))
         img = get_warp_img(img,dir_path,img_resize)
-
+        cv2.imwrite("1.jpg", img) 
         chess_board,player_bool_position = fen2board(board.fen())
         result = engine.play(board, chess.engine.Limit(time=0.500))
 
@@ -335,20 +336,15 @@ while not board.is_game_over():
             if cv2.waitKey(1) == ord('w'):
                 break
         print("Done White")
+
     ## black turn
     else:
-        past_bool_position = np.zeros((8,8),dtype=int)
-        current_bool_position = np.zeros((8,8),dtype=int)
         chess_board,bool_position = fen2board(board.fen())
-        # result = engine.play(board, chess.engine.Limit(time=0.500))
-        # board.push(result.move)
-        # print(result.move)
 
         ret , img = device.read()
-        img =   cv2.resize(img,(800,800))
-        img = get_warp_img(img,dir_path,img_resize)
-        cv2.imshow("Game",img)
-        past_bool_position = player_position(img,thresold_value,boxes)
+        img_1 =   cv2.resize(img,(800,800))
+        img_1 = get_warp_img(img_1,dir_path,img_resize)
+        cv2.imshow("Game",img_1)
 
         print("Player time to move : ")
         print("press 'q' when player moved ")
@@ -357,50 +353,52 @@ while not board.is_game_over():
                 break
 
         ret , img = device.read()
+        img_2 =   cv2.resize(img,(800,800))
+        img_2 = get_warp_img(img_2,dir_path,img_resize)
+        cv2.imshow("Game",img_2)
         
-        img =   cv2.resize(img,(800,800))
-        img = get_warp_img(img,dir_path,img_resize)
-        cv2.imshow("Game",img)
-        current_bool_position = player_position(img,thresold_value,boxes)
-        cv2.waitKey(0)
+        move_word = find_current_past_position(img_1,img_2,boxes,bool_position,board.fen(),chess_board,number_to_position_map,map_position)
+        board.push(chess.Move.from_uci(str(move_word)))
+        print("done")
+        # cv2.imwrite("3.jpg", img) 
+        # cv2.waitKey(0)
+        # difference_matrix = current_bool_position-past_bool_position
+        # position_of_negative = np.where(difference_matrix == -1)
+        # position_of_positive = np.where(difference_matrix == 1)
 
-        difference_matrix = current_bool_position-past_bool_position
-        position_of_negative = np.where(difference_matrix == -1)
-        position_of_positive = np.where(difference_matrix == 1)
-
-        if len(position_of_negative[0])==0:
-            ## no changes
-            print("there is no changes detacts  ")
-        elif len(position_of_negative[0])==1:
-            ## move 1 player
-            player_moved = chess_board[position_of_negative[0][0]][position_of_negative[1][0]]
-            chess_board[position_of_negative]=1
-            chess_board[position_of_positive]=player_moved
-            move_word = number_to_position_map[int(position_of_negative[0][0])][int(position_of_negative[1][0])]
-            move_word+= number_to_position_map[int(position_of_positive[0][0])][int(position_of_positive[1][0])]
+        # if len(position_of_negative[0])==0:
+        #     ## no changes
+        #     print("there is no changes detacts  ")
+        # elif len(position_of_negative[0])==1:
+        #     ## move 1 player
+        #     player_moved = chess_board[position_of_negative[0][0]][position_of_negative[1][0]]
+        #     chess_board[position_of_negative]=1
+        #     chess_board[position_of_positive]=player_moved
+        #     move_word = number_to_position_map[int(position_of_negative[0][0])][int(position_of_negative[1][0])]
+        #     move_word+= number_to_position_map[int(position_of_positive[0][0])][int(position_of_positive[1][0])]
             
-            position1 = str(move_word)[0:2]
-            position2 = str(move_word)[2:4]
+        #     position1 = str(move_word)[0:2]
+        #     position2 = str(move_word)[2:4]
 
-            box_1_cordinate = map_position[position1]
-            box_2_cordinate = map_position[position2]
-            position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
-            position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
+        #     box_1_cordinate = map_position[position1]
+        #     box_2_cordinate = map_position[position2]
+        #     position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
+        #     position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
 
-            draw_img = img.copy()
-            cv2.rectangle(draw_img,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
-            cv2.rectangle(draw_img,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
+        #     draw_img = img.copy()
+        #     cv2.rectangle(draw_img,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
+        #     cv2.rectangle(draw_img,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
         
-            cv2.imshow("Game",draw_img)
-            cv2.waitKey(0)
-            print(move_word)
-            board.push(chess.Move.from_uci(str(move_word)))
-            print("Done Black")
-        else:
-            #more then 1 player moved detected
-            print("More then 1 playre detected")
-            print("set player to this postion")
-            print(board)
+        #     cv2.imshow("Game",draw_img)
+        #     cv2.waitKey(0)
+        #     print(move_word)
+        #     board.push(chess.Move.from_uci(str(move_word)))
+        #     print("Done Black")
+        # else:
+        #     #more then 1 player moved detected
+        #     print("More then 1 playre detected")
+        #     print("set player to this postion")
+        #     print(board)
 
 
 
