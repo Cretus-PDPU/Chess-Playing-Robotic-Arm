@@ -20,6 +20,7 @@ from find_position_black import find_current_past_position
 ###################################################################################
 ## Define Main Variables
 ###################################################################################
+
 points = []    # contains chess board corners points
 lower__w = []   # contains lower value for HSV of white player
 upper__w = []   # contains upper  value for HSV of white player
@@ -41,6 +42,7 @@ number_to_position_map = []
 ###################################################################################
 ## Code For Run Program
 ###################################################################################
+
 print("Enter Code for Special Run : ")
 code = str(input())
 dir_path += "/"+code
@@ -138,6 +140,7 @@ def thresold_calibreation(img):
 ###################################################################################
 ## camara position calibration
 ###################################################################################
+
 while True:
     print("Do you want to set camara Position[y/n] : ",end=" ")
     answer = str(input())
@@ -165,6 +168,7 @@ while True:
 ###################################################################################
 ## Image warp_presnpective
 ###################################################################################
+
 while True:
     print("DO you want to warp prespective image[y/n] :",end=" ")
     answer = str(input())
@@ -263,13 +267,15 @@ while True:
 ## calibration thresold
 ###################################################################################
 
-print("calibrate thresold :")
-ret , img = device.read()
-img =   cv2.resize(img,(800,800))
-img = get_warp_img(img,dir_path,img_resize)
-gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-thresold_value = thresold_calibreation(gray)
-cv2.destroyAllWindows()
+# print("calibrate thresold :")
+# ret , img = device.read()
+# img =   cv2.resize(img,(800,800))
+# img = get_warp_img(img,dir_path,img_resize)
+# gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+# thresold_value = thresold_calibreation(gray)
+# cv2.destroyAllWindows()
+
+
 ###################################################################################
 ## calibration color
 ###################################################################################
@@ -297,6 +303,40 @@ cv2.destroyAllWindows()
 #         break
 #     else:
 #         print("something wrong input")
+
+###################################################################################
+## Load Past Game
+###################################################################################
+while True:
+        print("do you want to Load Past Game [y/n]:",end=" ")
+        ans = str(input())
+        if ans == "y" or ans == "Y":
+            chess_board = np.load(dir_path+'/fen_line_board.npz')['chess_board']
+            player_bool_position = np.load(dir_path+'/fen_line_board.npz')['player_bool_position']
+            fen_line = board2fen(chess_board)
+            board = chess.Board(fen=fen_line)
+            ret , img = device.read()
+            img =   cv2.resize(img,(800,800))
+            img = get_warp_img(img,dir_path,img_resize)
+            img_box = img.copy()
+            for i in range(8):
+                for j in range(8):
+                    box1 = boxes[i,j]
+                    cv2.rectangle(img_box, (int(box1[0]), int(box1[1])), (int(box1[2]), int(box1[3])), (255,0,0), 2)
+                    cv2.putText(img_box,"({})".format(chess_board[i][j]),(int(box1[2])-70, int(box1[3])-50),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
+            cv2.imshow("Game",img_box)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            break
+        elif ans == "n" or ans == "N":
+            chess_board,player_bool_position = fen2board(board.fen())
+            np.savez(dir_path+"/fen_line_board.npz",chess_board=chess_board,player_bool_position=player_bool_position)
+            print("Load successfully")
+            break
+        else:
+            print("something wrong input")
+
+
 
 ###################################################################################
 ## Start Game
@@ -336,7 +376,8 @@ while not board.is_game_over():
             if cv2.waitKey(1) == ord('w'):
                 break
         print("Done White")
-
+        chess_board,player_bool_position = fen2board(board.fen())
+        np.savez(dir_path+"/fen_line_board.npz",chess_board=chess_board,player_bool_position=player_bool_position)
     ## black turn
     else:
         chess_board,bool_position = fen2board(board.fen())
@@ -360,6 +401,8 @@ while not board.is_game_over():
         move_word = find_current_past_position(img_1,img_2,boxes,bool_position,board.fen(),chess_board,number_to_position_map,map_position)
         board.push(chess.Move.from_uci(str(move_word)))
         print("done")
+        chess_board,player_bool_position = fen2board(board.fen())
+        np.savez(dir_path+"/fen_line_board.npz",chess_board=chess_board,player_bool_position=player_bool_position)
         # cv2.imwrite("3.jpg", img) 
         # cv2.waitKey(0)
         # difference_matrix = current_bool_position-past_bool_position

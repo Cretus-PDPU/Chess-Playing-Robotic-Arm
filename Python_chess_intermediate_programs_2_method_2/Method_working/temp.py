@@ -15,22 +15,27 @@ def thresold_calibreation(img):
             return t
 
 image1 = cv2.imread('Python_chess_intermediate_programs_2_method_2/Method_working/Images/2.jpg')
+
 image2 = cv2.imread('Python_chess_intermediate_programs_2_method_2/Method_working/Images/3.jpg')
+
 
 image1_gray = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
 image2_gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
 
-diff = cv2.absdiff(image1,image2)
+image1_gray = cv2.medianBlur(image1_gray, 11)
+image2_gray = cv2.medianBlur(image2_gray, 11)
 
-cv2.imshow("diff", diff)
+diff = cv2.absdiff(image1_gray,image2_gray)
+
+# cv2.imshow("diff", diff)
 cv2.waitKey(0)
 
 diff = cv2.resize(diff,(800,800))
-cv2.imshow("diff",diff)
-diff_gray = cv2.cvtColor(diff,cv2.COLOR_BGR2GRAY)
-cv2.imshow("diff_gray", diff_gray)
+# cv2.imshow("diff",diff)
+# diff_gray = cv2.cvtColor(diff,cv2.COLOR_BGR2GRAY)
+# cv2.imshow("diff_gray", diff_gray)
 cv2.waitKey(0)
-matrix,thresold = cv2.threshold(diff_gray,30,255,cv2.THRESH_BINARY)
+matrix,thresold = cv2.threshold(diff,40,255,cv2.THRESH_BINARY)
 cv2.imshow("thresold", thresold)
 cv2.waitKey(0)
 cnts,_ = cv2.findContours(thresold, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -47,7 +52,7 @@ cv2.waitKey(0)
 
 
 
-value = thresold_calibreation(diff_gray)
+value = thresold_calibreation(diff)
 
 matrix,thresold = cv2.threshold(diff_gray,value,255,cv2.THRESH_BINARY)
 cv2.imshow("thresold",thresold)
