@@ -29,55 +29,54 @@ def find_current_past_position(img_1,img_2,boxes,bool_position,FEN_line,chess_bo
     past_black_bool_position = fen2board_black(FEN_line)
 
     image_diff = cv2.absdiff(img_1,img_2)
-    cv2.imshow("diff",image_diff)
+    # cv2.imshow("diff",image_diff)
     image_diff_gray = cv2.cvtColor(image_diff,cv2.COLOR_BGR2GRAY)
     matrix,thresold = cv2.threshold(image_diff_gray,30,255,cv2.THRESH_BINARY)
 
     cnts,_ = cv2.findContours(thresold, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    if len(cnts) == 2:
+        required_contoures_mid_point = []
+        for c in cnts:
+            area = cv2.contourArea(c)
+            if area> 500:
+                (x, y, w, h) = cv2.boundingRect(c)
+                required_contoures_mid_point.append([x+int(w/2),y+int(h/2)])
+                # cv2.rectangle(diff, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-    required_contoures_mid_point = []
-    for c in cnts:
-        area = cv2.contourArea(c)
-        if area> 500:
-            (x, y, w, h) = cv2.boundingRect(c)
-            required_contoures_mid_point.append([x+int(w/2),y+int(h/2)])
-            # cv2.rectangle(diff, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        flag = np.zeros((8,8),dtype=int)
+        for i in range(8):
+                for j in range(8):
+                    for mid_point in required_contoures_mid_point:
+                        if(rectContains(boxes[i][j],mid_point)) and flag[i][j]==0:
+                            diff_position[i][j] = 2
+                            flag[i][j]=1
 
-    flag = np.zeros((8,8),dtype=int)
-    for i in range(8):
-            for j in range(8):
-                for mid_point in required_contoures_mid_point:
-                    if(rectContains(boxes[i][j],mid_point)) and flag[i][j]==0:
-                        diff_position[i][j] = 2
-                        flag[i][j]=1
+        
+        temp_matrix = past_black_bool_position - diff_position
+        position_of_past_black = np.where(temp_matrix == -1)
+        position_of_new_black = np.where(temp_matrix == -2)
 
-    
-    temp_matrix = past_black_bool_position - diff_position
-    position_of_past_black = np.where(temp_matrix == -1)
-    position_of_new_black = np.where(temp_matrix == -2)
+        player_moved = chess_board[position_of_past_black[0][0]][position_of_past_black[1][0]]
+        chess_board[position_of_past_black]=1
+        chess_board[position_of_new_black]=player_moved
 
-    player_moved = chess_board[position_of_past_black[0][0]][position_of_past_black[1][0]]
-    chess_board[position_of_past_black]=1
-    chess_board[position_of_new_black]=player_moved
+        move_word = number_to_position_map[int(position_of_past_black[0][0])][int(position_of_past_black[1][0])]
+        move_word+= number_to_position_map[int(position_of_new_black[0][0])][int(position_of_new_black[1][0])]
 
-    move_word = number_to_position_map[int(position_of_past_black[0][0])][int(position_of_past_black[1][0])]
-    move_word+= number_to_position_map[int(position_of_new_black[0][0])][int(position_of_new_black[1][0])]
+        position1 = str(move_word)[0:2]
+        position2 = str(move_word)[2:4]
 
-    position1 = str(move_word)[0:2]
-    position2 = str(move_word)[2:4]
+        box_1_cordinate = map_position[position1]
+        box_2_cordinate = map_position[position2]
+        
+        position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
+        position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
 
-    box_1_cordinate = map_position[position1]
-    box_2_cordinate = map_position[position2]
-    
-    position1_box = boxes[box_1_cordinate[0]][box_1_cordinate[1]]
-    position2_box = boxes[box_2_cordinate[0]][box_2_cordinate[1]]
+        draw_img = img_2.copy()
+        cv2.rectangle(draw_img,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
+        cv2.rectangle(draw_img,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
 
-    draw_img = img_2.copy()
-    cv2.rectangle(draw_img,(position1_box[0],position1_box[1]),(position1_box[2],position1_box[3]),(0,0,255),3)
-    cv2.rectangle(draw_img,(position2_box[0],position2_box[1]),(position2_box[2],position2_box[3]),(0,255,0),3)
-    
-    cv2.imshow("Game",draw_img)
-    cv2.waitKey(0)
-
-    return move_word
+        return move_word,draw_img,1
+    else:
+        return " ",img_2,0
 
