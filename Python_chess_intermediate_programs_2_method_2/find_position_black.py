@@ -29,12 +29,13 @@ def find_current_past_position(img_1,img_2,boxes,bool_position,FEN_line,chess_bo
     past_black_bool_position = fen2board_black(FEN_line)
 
     image_diff = cv2.absdiff(img_1,img_2)
-    # cv2.imshow("diff",image_diff)
+    cv2.imshow("diff",image_diff)
     image_diff_gray = cv2.cvtColor(image_diff,cv2.COLOR_BGR2GRAY)
-    matrix,thresold = cv2.threshold(image_diff_gray,30,255,cv2.THRESH_BINARY)
-
+    cv2.imshow("Gray",image_diff_gray)
+    matrix,thresold = cv2.threshold(image_diff_gray,35,255,cv2.THRESH_BINARY)
+    cv2.imshow("thre",thresold)
     cnts,_ = cv2.findContours(thresold, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    if len(cnts) == 2:
+    if len(cnts) >= 2:
         required_contoures_mid_point = []
         for c in cnts:
             area = cv2.contourArea(c)

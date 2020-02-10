@@ -9,6 +9,7 @@ def player_position(img , thresold_value,boxes):
     bool_position = np.zeros((8,8),dtype=int)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     matrix,thresold = cv2.threshold(gray,thresold_value,255,cv2.THRESH_BINARY_INV)
+    cv2.imshow("thresold",thresold)
     contours,_= cv2.findContours(thresold,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     required_contoures = []
     required_contoures_mid_point = []
