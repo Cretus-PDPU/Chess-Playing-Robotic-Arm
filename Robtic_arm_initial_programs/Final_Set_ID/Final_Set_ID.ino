@@ -2,7 +2,7 @@
 
 #define DirectionPin   (10u)
 #define BaudRate      (1000000ul)
-#define ID        (2u)
+#define ID        (1u)
 
 void setup() {
   delay(100);
