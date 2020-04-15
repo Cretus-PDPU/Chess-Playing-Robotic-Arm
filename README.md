@@ -1,3 +1,5 @@
+<img src="Images/Cretus.jpeg" width="170">
+
 # opencv-chess
 Human vs AI (Stockfish engine)
 
