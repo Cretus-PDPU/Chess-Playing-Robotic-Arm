@@ -12,6 +12,9 @@ Camera captures the image of chessboard then the imageis analyzed using imagepro
 [![check out my youtube video](https://img.youtube.com/vi/v12ELMNIZVE/0.jpg)](https://www.youtube.com/watch?v=v12ELMNIZVE)|[![check out my youtube video](https://img.youtube.com/vi/e0FtXusMFTY/0.jpg)](https://www.youtube.com/watch?v=e0FtXusMFTY)
 :-------------------------:|:-------------------------:
 
+[![check out my youtube video](https://img.youtube.com/vi/JnpxzLM8ht0/0.jpg)](https://youtu.be/JnpxzLM8ht0)|[![check out my youtube video](https://img.youtube.com/vi/PQk7sFsqaRQ/0.jpg)](https://youtu.be/PQk7sFsqaRQ)
+:-------------------------:|:-------------------------:
+
 # Method of Working
 ## Step - 1
 Image1 : Image of Chess Board befor player move piece|Image2 : Image of Chess Board after player move piece
